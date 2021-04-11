@@ -9,55 +9,72 @@ import VisuallyHidden from '../VisuallyHidden';
 const SIZES = {
   small: {
     fontSize: 14 / 16 + 'rem',
-    height: 24,
+    height: 24 / 16,
     borderWidth: 1,
+    iconSize: 16,
+    paddingLeft: 24,
   },
-  medium: {
+  large: {
     fontSize: 18 / 16 + 'rem',
-    height: 36,
+    height: 36 / 16,
     borderWidth: 2,
+    iconSize: 24,
+    paddingLeft: 36,
   },
 };
 
-const Wrapper = styled.div`
-  width: var(--width);
-  height: var(--height);
+const Wrapper = styled.label`
+  display: block;
   position: relative;
+  color: ${COLORS.gray700};
+
+  &:hover {
+    color: ${COLORS.black};
+  }
 `;
 
-const NativeInput = styled.input`
+const IconWrapper = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-`;
-const PresentationalBit = styled.div`
-  font-size: var(--fontSize);
-  border-bottom: var(--borderWidth) solid ${COLORS.black};
+  bottom: 0;
+  margin: auto 0;
+  height: var(--size);
 `;
 
-const IconInput = ({ label, icon, width = 250, size, placeholder }) => {
-  const [text, setText] = React.useState('');
-  const presentationalStyles = {
+const TextInput = styled.input`
+  width: var(--width);
+  height: var(--height);
+  border: none;
+  border-bottom: var(--borderWidth) solid ${COLORS.black};
+  padding-left: var(--paddingLeft);
+  color: inherit;
+  font-weight: 700;
+
+  &::placeholder {
+    color: ${COLORS.gray500};
+    font-weight: 400;
+  }
+
+  &:focus {
+    outline-offset: 2px;
+  }
+`;
+
+const IconInput = ({ label, icon, width = 250, size, ...delegated }) => {
+  const styles = {
+    '--width': width + 'px',
     '--fontSize': SIZES[size].fontSize,
     '--borderWidth': SIZES[size].borderWidth + 'px',
-  };
-  const wrapperStyles = {
-    '--width': width + 'px',
-    '--height': SIZES[size].height + 'px',
+    '--height': SIZES[size].height + 'rem',
+    '--paddingLeft': SIZES[size].paddingLeft + 'px',
   };
   return (
-    <Wrapper style={wrapperStyles}>
-      <NativeInput
-        placeholder={placeholder}
-        onChange={(e) => setText(e.target.value)}
-      ></NativeInput>
-      <PresentationalBit style={presentationalStyles}>
-        <Icon id={icon} strokeWidth={1} size={24} />
-        {!text ? placeholder : text}
-      </PresentationalBit>
+    <Wrapper>
+      <VisuallyHidden>{label}</VisuallyHidden>
+      <IconWrapper style={{ '--size': SIZES[size].iconSize + 'px' }}>
+        <Icon id={icon} size={SIZES[size].iconSize} />
+      </IconWrapper>
+      <TextInput style={styles} {...delegated} />
     </Wrapper>
   );
 };
